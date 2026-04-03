@@ -2,17 +2,9 @@
 
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel
 import curlconverter
-# import pprint, uncurl
+# import uncurl
 import subprocess
-
-def dict_printer(d):
-    s = ""
-    for k,v in d.items():
-        if isinstance(v,dict):
-            s = s + dict_printer(v)
-        else:
-            s = s + f"{k} -> {v}" + "\n"
-    return s
+import pprint
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -63,11 +55,11 @@ class MainWindow(QMainWindow):
 
         parsed, res = self.parse_curl(text)
         if not parsed:
-            self.request_label.setText(f"Error parsing curl... please check your curl..\n Error::{res}")
+            self.request_label.setText(f"Error parsing curl... please check your curl..\nError::{res}")
         else:
             self.input_box.clear()
             self.input_box.setFocus()
-            self.request_label.setText(dict_printer(res))
+            self.request_label.setText(pprint.pformat(res))
 
     def on_send_request(self):
         # command = self.clean_curl_text(self.input_box.text())
