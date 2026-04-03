@@ -44,16 +44,13 @@ class MainWindow(QMainWindow):
         self.input_box.clear()
         self.input_box.setFocus()
         self.result_label.clear()
-        # self.layout.removeWidget(self.result_label)
 
     def on_submit(self):
         text = self.input_box.text()
-        # self.result_label.setText(f"Submitted: {text}")
         if text.strip() == "":
             return
-        print("dddd")
+
         parsed, res = self.parse_curl(text)
-        # self.layout.addWidget(self.result_label)
         if not parsed:
             self.result_label.setText(f"Error parsing curl... please check your curl..\n Error::{res}")
         else:
@@ -68,7 +65,6 @@ class MainWindow(QMainWindow):
 
     def parse_curl(self,text):
         try:
-            # print(self.clean_curl_text(text))
             p = curlconverter.CurlConverter(self.clean_curl_text(text))
             parsed = p.convert()
             # parsed = uncurl.parse_context(self.clean_curl_text(text))
