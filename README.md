@@ -8,5 +8,6 @@
 ```
 $ chmod +x build.sh
 $ . venv/bin/activate
+$ chmod +x ./please.py
 (venv) $ ./please.py
 ```
