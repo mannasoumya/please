@@ -3,6 +3,7 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel
 import curlconverter
 # import pprint, uncurl
+import subprocess
 
 def dict_printer(d):
     s = ""
@@ -17,7 +18,10 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Please 🙏")
+        self.set_widgets()
+        self.show()
 
+    def set_widgets(self):
         container = QWidget()
         self.layout: QVBoxLayout = QVBoxLayout()
         self.input_box = QLineEdit()
@@ -27,6 +31,11 @@ class MainWindow(QMainWindow):
         submit_button.pressed.connect(self.on_submit)
         clear_button = QPushButton("Clear")
         clear_button.pressed.connect(self.on_clear)
+        send_button = QPushButton("Send")
+        send_button.pressed.connect(self.on_send_request)
+
+        self.request_label = QLabel("")
+        self.request_label.setWordWrap(True)
 
         self.result_label = QLabel("")
         self.result_label.setWordWrap(True)
@@ -34,15 +43,17 @@ class MainWindow(QMainWindow):
         self.layout.addWidget(self.input_box)
         self.layout.addWidget(submit_button)
         self.layout.addWidget(clear_button)
+        self.layout.addWidget(send_button)
+        self.layout.addWidget(self.request_label)
         self.layout.addWidget(self.result_label)
 
         container.setLayout(self.layout)
         self.setCentralWidget(container)
-        self.show()
 
     def on_clear(self):
         self.input_box.clear()
         self.input_box.setFocus()
+        self.request_label.clear()
         self.result_label.clear()
 
     def on_submit(self):
@@ -52,11 +63,23 @@ class MainWindow(QMainWindow):
 
         parsed, res = self.parse_curl(text)
         if not parsed:
-            self.result_label.setText(f"Error parsing curl... please check your curl..\n Error::{res}")
+            self.request_label.setText(f"Error parsing curl... please check your curl..\n Error::{res}")
         else:
             self.input_box.clear()
             self.input_box.setFocus()
-            self.result_label.setText(dict_printer(res))
+            self.request_label.setText(dict_printer(res))
+
+    def on_send_request(self):
+        # command = self.clean_curl_text(self.input_box.text())
+        # ['swfdump', '/tmp/filename.swf', '-d'],
+        process = subprocess.Popen(
+            ["ls", "-al"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+            )
+        stdout, stderr = process.communicate()
+        print(stdout.decode("utf-8"))
+        self.result_label.setText(stdout.decode("utf-8"))
 
     def clean_curl_text(self, text:str):
         text = text.replace("--location","")
